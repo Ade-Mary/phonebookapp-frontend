@@ -1,0 +1,30 @@
+/* Import Bootstrap */
+@import '../../node_modules/bootstrap/scss/bootstrap';
+
+/* Custom Styles */
+body {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+.contact-card {
+  transition: transform 0.2s;
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+.favorite-star {
+  cursor: pointer;
+  color: gold;
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+/* Dark Mode Overrides */
+[data-bs-theme="dark"] {
+  .navbar {
+    background-color: #1a1a1a !important;
+  }
+}
