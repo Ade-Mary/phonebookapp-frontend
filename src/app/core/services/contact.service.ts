@@ -37,14 +37,14 @@ export class ContactService {
   // Load contacts from Local Storage
   private loadContacts(): void {
     const stored = localStorage.getItem(this.STORAGE_KEY);
-    if (stored) {
-      this.contacts = JSON.parse(stored).map((contact: Contact) => ({
-        ...contact,
-        createdAt: new Date(contact.createdAt), // Ensure Date format is correct
-      }));
-    } else {
-      this.contacts = [];
-    }
+    // // if (stored) {
+    // //   this.contacts = JSON.parse(stored).map((contact: Contact) => ({
+    // //     ...contact,
+    // //     createdAt: new Date(contact.createdAt), // Ensure Date format is correct
+    // //   }));
+    // } else {
+    //   this.contacts = [];
+    // }
   }
 
   // Save contacts to Local Storage
