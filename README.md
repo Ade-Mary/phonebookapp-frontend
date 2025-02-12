@@ -19,8 +19,6 @@ A Contact Management System built with Angular 19 for the frontend. This applica
 - Mock Data Storage: Local array (for frontend-only development)  
 - Version Control: Git & GitHub  
 
-## Screenshots  
-(Add screenshots here if available)
 
 ## Installation & Setup  
 1. Clone the repository:  
