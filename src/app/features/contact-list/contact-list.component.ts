@@ -1,45 +1,38 @@
-import { Component } from '@angular/core';
-import { ContactService } from '../../core/services/contact.service';
+import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ContactFormComponent } from '../contact-form/contact-form.component';
-import { Contact } from '../../core/interfaces/contact';
-import { ViewToggleComponent } from '../../shared/components/view-toggle/view-toggle.component';
-import { FormsModule } from '@angular/forms';
+import { ContactService } from '../../core/services/contact.service';
+import { Contact } from '../../core/interfaces/contact'; // ✅ Ensured lowercase import
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-contact-list',
   standalone: true,
-  imports: [FormsModule, ViewToggleComponent], // Add FormsModule
+  imports: [CommonModule, RouterModule],
   templateUrl: './contact-list.component.html',
   styleUrls: ['./contact-list.component.scss'],
 })
-export class ContactListComponent {
-  viewMode: 'grid' | 'list' = 'grid';
-  searchQuery = '';
-  selectedGroup = '';
-  selectedContacts = new Set<string>();
+export class ContactListComponent implements OnInit {
+  contacts: Contact[] = [];
 
-  constructor(
-    public contactService: ContactService,
-    private modalService: NgbModal
-  ) {}
+  constructor(private contactService: ContactService, private modalService: NgbModal) {}
 
-  openContactForm(contact?: Contact): void {
+  ngOnInit() {
+    this.contacts = this.contactService.getAllContacts();
+  }
+
+  async openContactForm(contact?: Contact) {
+    const { ContactFormComponent } = await import('../contact-form/contact-form.component');
     const modalRef = this.modalService.open(ContactFormComponent);
     modalRef.componentInstance.contact = contact;
+
+    modalRef.closed.subscribe(() => {
+      this.contacts = this.contactService.getAllContacts();
+    });
   }
 
-  toggleFavorite(contact: Contact): void {
-    contact.isFavorite = !contact.isFavorite;
-    this.contactService.updateContact(contact);
-  }
-
-  deleteContact(id: string): void {
+  deleteContact(id: string) {
     this.contactService.deleteContact(id);
-  }
-
-  bulkDelete(): void {
-    this.contactService.deleteContacts([...this.selectedContacts]);
-    this.selectedContacts.clear();
+    this.contacts = this.contactService.getAllContacts();
   }
 }

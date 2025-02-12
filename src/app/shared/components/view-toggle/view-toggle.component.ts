@@ -7,4 +7,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class ViewToggleComponent {
   @Input() viewMode: 'grid' | 'list' = 'grid';
   @Output() viewModeChange = new EventEmitter<'grid' | 'list'>();
+
+  toggleView(mode: 'grid' | 'list') {
+    this.viewMode = mode;
+    this.viewModeChange.emit(mode);
+  }
 }

@@ -2,15 +2,16 @@
     <button
       class="btn btn-outline-secondary"
       [class.active]="viewMode === 'grid'"
-      (click)="viewMode = 'grid'; viewModeChange.emit(viewMode)"
+      (click)="toggleView('grid')"
     >
       Grid
     </button>
     <button
       class="btn btn-outline-secondary"
       [class.active]="viewMode === 'list'"
-      (click)="viewMode = 'list'; viewModeChange.emit(viewMode)"
+      (click)="toggleView('list')"
     >
       List
     </button>
   </div>
+  

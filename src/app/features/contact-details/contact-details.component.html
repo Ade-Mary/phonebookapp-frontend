@@ -1,15 +1,35 @@
 <div class="modal-header">
     <h4 class="modal-title">Contact Details</h4>
   </div>
+  
   <div class="modal-body">
     <div class="text-center mb-3">
-      <img [src]="contact.imageUrl" class="img-fluid rounded-circle" style="width: 150px;">
+      <img [src]="contact?.contactImage || 'assets/default-avatar.png'" 
+           class="img-fluid rounded-circle" 
+           style="width: 150px;">
     </div>
+  
     <dl class="row">
       <dt class="col-sm-3">Name</dt>
-      <dd class="col-sm-9">{{ contact.firstName }} {{ contact.lastName }}</dd>
-      
-      <!-- Add all other contact details -->
-      
+      <dd class="col-sm-9">{{ contact?.firstName }} {{ contact?.lastName }}</dd>
+  
+      <dt class="col-sm-3">Email</dt>
+      <dd class="col-sm-9">{{ contact?.email }}</dd>
+  
+      <dt class="col-sm-3">Phone</dt>
+      <dd class="col-sm-9">{{ contact?.phoneNumber }}</dd>
+  
+      <dt class="col-sm-3">Group</dt>
+      <dd class="col-sm-9">{{ contact?.group }}</dd>
+  
+      <dt class="col-sm-3">Address</dt>
+      <dd class="col-sm-9">{{ contact?.physicalAddress }}</dd>
+  
+      <dt class="col-sm-3">Favorite</dt>
+      <dd class="col-sm-9">
+        <i *ngIf="contact?.favorite" class="bi bi-star-fill text-warning"></i>
+        <span *ngIf="!contact?.favorite">No</span>
+      </dd>
     </dl>
   </div>
+  

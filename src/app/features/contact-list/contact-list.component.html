@@ -1,37 +1,30 @@
-<div class="mb-3">
-    <input
-      type="text"
-      class="form-control"
-      placeholder="Search contacts..."
-      [(ngModel)]="searchQuery"
-    />
+<div class="container mt-4">
+    <h2>Contact List</h2>
+    
+    <button class="btn btn-primary mb-3" (click)="openContactForm()">+ Add Contact</button>
+  
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let contact of contacts">
+          <td>{{ contact.firstName }}</td>
+          <td>{{ contact.lastName }}</td>
+          <td>{{ contact.email }}</td>
+          <td>{{ contact.phoneNumber }}</td>
+          <td>
+            <button class="btn btn-sm btn-secondary me-2" (click)="openContactForm(contact)">Edit</button>
+            <button class="btn btn-sm btn-danger" (click)="deleteContact(contact.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
   
-  <div class="d-flex justify-content-between mb-3">
-    <app-view-toggle [(viewMode)]="viewMode"></app-view-toggle>
-    <button class="btn btn-primary" (click)="openContactForm()">Add Contact</button>
-  </div>
-  
-  <div *ngIf="viewMode === 'grid'" class="row">
-    <div *ngFor="let contact of contactService.getAllContacts()" class="col-md-4 mb-3">
-      <div class="card contact-card">
-        <img [src]="contact.imageUrl" class="card-img-top" alt="Contact Image" />
-        <div class="card-body">
-          <h5 class="card-title">{{ contact.firstName }} {{ contact.lastName }}</h5>
-          <p class="card-text">{{ contact.email }}</p>
-          <button class="btn btn-sm btn-outline-primary me-2" (click)="openContactForm(contact)">
-            Edit
-          </button>
-          <button class="btn btn-sm btn-outline-danger" (click)="deleteContact(contact.id)">
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div *ngIf="viewMode === 'list'" class="list-group">
-    <div *ngFor="let contact of contactService.getAllContacts()" class="list-group-item">
-      {{ contact.firstName }} {{ contact.lastName }} - {{ contact.email }}
-    </div>
-  </div>

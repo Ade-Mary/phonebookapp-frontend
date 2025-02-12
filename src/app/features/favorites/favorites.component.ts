@@ -9,6 +9,6 @@ export class FavoritesComponent {
   constructor(public contactService: ContactService) {}
 
   get favorites() {
-    return this.contactService.getAllContacts().filter(c => c.isFavorite);
+    return this.contactService.getAllContacts().filter(c => c.favorite);
   }
 }

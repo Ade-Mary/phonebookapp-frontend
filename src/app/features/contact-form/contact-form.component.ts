@@ -1,63 +1,58 @@
-import { Component, Input } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ContactService } from '../../core/services/contact.service';
-import { Contact } from '../../core/interfaces/contact';
+import { Contact, ContactGroup } from '../../core/interfaces/contact';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-contact-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule], // ✅ Added CommonModule
   templateUrl: './contact-form.component.html',
   styleUrls: ['./contact-form.component.scss'],
 })
-export class ContactFormComponent {
+export class ContactFormComponent implements OnInit {
   @Input() contact?: Contact;
-  form;
+  form!: FormGroup;
+  groups = Object.values(ContactGroup); // Convert enum to array for dropdown
 
   constructor(
-    private fb: FormBuilder, // fb is initialized here
+    private fb: FormBuilder,
     public activeModal: NgbActiveModal,
     private contactService: ContactService
-  ) {
+  ) {}
+
+  ngOnInit() {
     this.form = this.fb.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      imageUrl: [''],
-      address: [''],
-      group: ['', Validators.required]
+      firstName: [this.contact?.firstName || '', Validators.required],
+      lastName: [this.contact?.lastName || '', Validators.required],
+      email: [this.contact?.email || '', [Validators.required, Validators.email]],
+      phoneNumber: [this.contact?.phoneNumber || '', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      contactImage: [this.contact?.contactImage || ''],
+      physicalAddress: [this.contact?.physicalAddress || ''],
+      group: [this.contact?.group || ContactGroup.OTHER, Validators.required], // Default to OTHER
+      favorite: [this.contact?.favorite ?? false] // Boolean value
     });
   }
 
-  ngOnInit() {
-    if (this.contact) {
-      this.form.patchValue(this.contact);
-    }
-  }
-
   onSubmit() {
-    if (this.form.valid) {
-      const contactData = {
-        ...this.form.value,
-        firstName: this.form.value.firstName || '',
-        lastName: this.form.value.lastName || '',
-        email: this.form.value.email || '',
-        phone: this.form.value.phone || '',
-        imageUrl: this.form.value.imageUrl || '',
-        address: this.form.value.address || '',
-        group: this.form.value.group || '',
-        isFavorite: this.contact?.isFavorite ?? false, 
-      };
+    if (this.form.invalid) return;
 
-      if (this.contact) {
-        this.contactService.updateContact({ ...this.contact, ...contactData });
-      } else {
-        this.contactService.addContact(contactData);
-      }
-      this.activeModal.close();
+    const contactData: Contact = {
+      id: this.contact?.id || crypto.randomUUID(), // Ensure unique ID for new contacts
+      createdAt: this.contact?.createdAt || new Date(), // Ensure a date is set
+      ...this.form.value,
+      group: this.form.value.group as ContactGroup, // Ensure `group` is a valid enum
+    };
+
+    if (this.contact) {
+      this.contactService.updateContact(contactData);
+    } else {
+      this.contactService.addContact(contactData);
     }
+    
+    this.activeModal.close();
   }
 }
