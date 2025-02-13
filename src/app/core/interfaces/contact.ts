@@ -13,7 +13,7 @@ export enum ContactGroup {
     phoneNumber: string;
     contactImage?: string;
     physicalAddress?: string;
-    group: ContactGroup; // ✅ Uses the enum from the same file
+    group: ContactGroup; 
     favorite: boolean;
     createdAt: Date;
   }

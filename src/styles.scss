@@ -1,8 +1,10 @@
-/* Import Bootstrap */
-@import '../node_modules/bootstrap/scss/bootstrap';
-
+/* ✅ Use @use instead of @import */
+@use "../node_modules/bootstrap/scss/bootstrap";
 
 /* Custom Global Styles */
 body {
   padding-top: 56px; /* Adjust for fixed navbar */
 }
+
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';

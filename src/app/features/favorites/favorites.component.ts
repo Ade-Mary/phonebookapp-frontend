@@ -1,14 +1,23 @@
 import { Component } from '@angular/core';
-import { ContactService } from '../../core/services/contact.service';
+import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
+import { ContactService, Contact } from '../../core/services/contact.service';
 
 @Component({
   selector: 'app-favorites',
-  templateUrl: './favorites.component.html'
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './favorites.component.html',
+  styleUrls: ['./favorites.component.scss']
 })
 export class FavoritesComponent {
-  constructor(public contactService: ContactService) {}
+  favorites$: Observable<Contact[]>;
 
-  get favorites() {
-    return this.contactService.getAllContacts().filter(c => c.favorite);
+  constructor(private contactService: ContactService) {
+    this.favorites$ = this.contactService.getFavorites();
+  }
+
+  toggleFavorite(contact: Contact): void {
+    this.contactService.toggleFavorite(contact.id);
   }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ContactService } from '../../core/services/contact.service';
-import { Contact } from '../../core/interfaces/contact'; // ✅ Ensured lowercase import
+import { Contact } from '../../core/interfaces/contact'; 
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 

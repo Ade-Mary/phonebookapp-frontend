@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-view-toggle',
+  standalone: true, 
   templateUrl: './view-toggle.component.html',
 })
 export class ViewToggleComponent {

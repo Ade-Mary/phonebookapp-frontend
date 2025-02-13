@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
-// Define Contact Group Enum
 export enum ContactGroup {
   FAMILY = 'FAMILY',
   FRIENDS = 'FRIENDS',
@@ -8,7 +8,6 @@ export enum ContactGroup {
   OTHER = 'OTHER'
 }
 
-// Define Contact Interface
 export interface Contact {
   id: string;
   firstName: string;
@@ -26,39 +25,31 @@ export interface Contact {
 export class ContactService {
   private readonly STORAGE_KEY = 'contacts';
   private contacts: Contact[] = [];
+  private favoritesSubject = new BehaviorSubject<Contact[]>([]);
 
   constructor() {
     this.loadContacts();
     if (this.contacts.length === 0) {
       this.initializeMockData();
     }
+    this.updateFavorites();
   }
 
-  // Load contacts from Local Storage
   private loadContacts(): void {
     const stored = localStorage.getItem(this.STORAGE_KEY);
-    // // if (stored) {
-    // //   this.contacts = JSON.parse(stored).map((contact: Contact) => ({
-    // //     ...contact,
-    // //     createdAt: new Date(contact.createdAt), // Ensure Date format is correct
-    // //   }));
-    // } else {
-    //   this.contacts = [];
-    // }
+    if (stored) {
+      this.contacts = JSON.parse(stored).map((contact: Contact) => ({
+        ...contact,
+        createdAt: new Date(contact.createdAt),
+      }));
+    }
   }
 
-  // Save contacts to Local Storage
   private saveContacts(): void {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.contacts));
+    this.updateFavorites();
   }
 
-  // Reset contacts to default mock data
-  resetContacts(): void {
-    localStorage.removeItem(this.STORAGE_KEY);
-    this.initializeMockData();
-  }
-
-  // Initialize with 8 mock contacts
   private initializeMockData(): void {
     this.contacts = [
       {
@@ -84,95 +75,32 @@ export class ContactService {
         group: ContactGroup.WORK,
         favorite: false,
         createdAt: new Date(),
-      },
-      {
-        id: crypto.randomUUID(),
-        firstName: 'Sophia',
-        lastName: 'Martinez',
-        email: 'sophia.martinez@example.com',
-        phoneNumber: '5551234567',
-        contactImage: 'https://via.placeholder.com/150',
-        physicalAddress: '12 Cherry Rd, Chicago, USA',
-        group: ContactGroup.FAMILY,
-        favorite: true,
-        createdAt: new Date(),
-      },
-      {
-        id: crypto.randomUUID(),
-        firstName: 'Daniel',
-        lastName: 'Harris',
-        email: 'daniel.harris@example.com',
-        phoneNumber: '4449876543',
-        contactImage: 'https://via.placeholder.com/150',
-        physicalAddress: '99 Birch Ave, Houston, USA',
-        group: ContactGroup.OTHER,
-        favorite: false,
-        createdAt: new Date(),
-      },
-      {
-        id: crypto.randomUUID(),
-        firstName: 'Olivia',
-        lastName: 'Taylor',
-        email: 'olivia.taylor@example.com',
-        phoneNumber: '6665551234',
-        contactImage: 'https://via.placeholder.com/150',
-        physicalAddress: '33 Pine St, Miami, USA',
-        group: ContactGroup.FRIENDS,
-        favorite: true,
-        createdAt: new Date(),
-      },
-      {
-        id: crypto.randomUUID(),
-        firstName: 'Ethan',
-        lastName: 'Wilson',
-        email: 'ethan.wilson@example.com',
-        phoneNumber: '7778889999',
-        contactImage: 'https://via.placeholder.com/150',
-        physicalAddress: '20 Cedar Ln, Dallas, USA',
-        group: ContactGroup.WORK,
-        favorite: false,
-        createdAt: new Date(),
-      },
-      {
-        id: crypto.randomUUID(),
-        firstName: 'Ava',
-        lastName: 'Anderson',
-        email: 'ava.anderson@example.com',
-        phoneNumber: '2223334444',
-        contactImage: 'https://via.placeholder.com/150',
-        physicalAddress: '55 Willow Dr, Boston, USA',
-        group: ContactGroup.FAMILY,
-        favorite: false,
-        createdAt: new Date(),
-      },
-      {
-        id: crypto.randomUUID(),
-        firstName: 'Liam',
-        lastName: 'Miller',
-        email: 'liam.miller@example.com',
-        phoneNumber: '9991112222',
-        contactImage: 'https://via.placeholder.com/150',
-        physicalAddress: '89 Redwood Rd, Seattle, USA',
-        group: ContactGroup.OTHER,
-        favorite: true,
-        createdAt: new Date(),
       }
     ];
-    
     this.saveContacts();
   }
 
-  // Get all contacts, sorted by first name
   getAllContacts(): Contact[] {
-    return [...this.contacts].sort((a, b) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
+    return [...this.contacts].sort((a, b) => a.firstName.localeCompare(b.firstName));
   }
 
-  // Get a single contact by ID
-  getContactById(id: string): Contact | undefined {
-    return this.contacts.find((c) => c.id === id);
+  getFavorites(): Observable<Contact[]> {
+    return this.favoritesSubject.asObservable();
   }
 
-  // Add a new contact (Prevents duplicate emails)
+  private updateFavorites(): void {
+    const favorites = this.contacts.filter(c => c.favorite);
+    this.favoritesSubject.next(favorites);
+  }
+
+  toggleFavorite(id: string): void {
+    const contact = this.contacts.find(c => c.id === id);
+    if (contact) {
+      contact.favorite = !contact.favorite;
+      this.saveContacts();
+    }
+  }
+
   addContact(contact: Omit<Contact, 'id' | 'createdAt'>): void {
     const exists = this.contacts.some((c) => c.email === contact.email);
     if (exists) {
@@ -190,24 +118,21 @@ export class ContactService {
     this.saveContacts();
   }
 
-  // Update an existing contact
-  updateContact(contact: Contact): void {
-    const index = this.contacts.findIndex((c) => c.id === contact.id);
-    if (index !== -1) {
-      this.contacts[index] = contact;
-      this.saveContacts();
-    }
-  }
-
-  // Delete a single contact
   deleteContact(id: string): void {
     this.contacts = this.contacts.filter((c) => c.id !== id);
     this.saveContacts();
   }
 
-  // Delete multiple contacts
-  deleteContacts(ids: string[]): void {
-    this.contacts = this.contacts.filter((c) => !ids.includes(c.id));
-    this.saveContacts();
+  updateContact(updatedContact: Contact): void {
+    const index = this.contacts.findIndex((c) => c.id === updatedContact.id);
+    if (index !== -1) {
+      this.contacts[index] = { ...updatedContact };
+      this.saveContacts();
+    } else {
+      console.warn('Contact not found.');
+    }
   }
+
+  
+  
 }

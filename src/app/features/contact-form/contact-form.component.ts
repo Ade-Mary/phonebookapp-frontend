@@ -9,14 +9,14 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-contact-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule], // ✅ Added CommonModule
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './contact-form.component.html',
   styleUrls: ['./contact-form.component.scss'],
 })
 export class ContactFormComponent implements OnInit {
   @Input() contact?: Contact;
   form!: FormGroup;
-  groups = Object.values(ContactGroup); // Convert enum to array for dropdown
+  groups = Object.values(ContactGroup);
 
   constructor(
     private fb: FormBuilder,
@@ -32,8 +32,8 @@ export class ContactFormComponent implements OnInit {
       phoneNumber: [this.contact?.phoneNumber || '', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       contactImage: [this.contact?.contactImage || ''],
       physicalAddress: [this.contact?.physicalAddress || ''],
-      group: [this.contact?.group || ContactGroup.OTHER, Validators.required], // Default to OTHER
-      favorite: [this.contact?.favorite ?? false] // Boolean value
+      group: [this.contact?.group || ContactGroup.OTHER, Validators.required],
+      favorite: [this.contact?.favorite ?? false]
     });
   }
 
@@ -41,10 +41,10 @@ export class ContactFormComponent implements OnInit {
     if (this.form.invalid) return;
 
     const contactData: Contact = {
-      id: this.contact?.id || crypto.randomUUID(), // Ensure unique ID for new contacts
-      createdAt: this.contact?.createdAt || new Date(), // Ensure a date is set
+      id: this.contact?.id || crypto.randomUUID(),
+      createdAt: this.contact?.createdAt || new Date(),
       ...this.form.value,
-      group: this.form.value.group as ContactGroup, // Ensure `group` is a valid enum
+      group: this.form.value.group as ContactGroup,
     };
 
     if (this.contact) {

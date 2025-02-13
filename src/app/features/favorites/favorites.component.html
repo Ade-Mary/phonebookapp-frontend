@@ -1,10 +1,24 @@
 <div class="row">
-    <div *ngFor="let contact of favorites" class="col-md-4 mb-3">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">{{ contact.firstName }} {{ contact.lastName }}</h5>
-          <!-- Add favorite toggle and other details -->
-        </div>
+  <!-- Display message if no favorites -->
+  <div *ngIf="(favorites$ | async)?.length === 0" class="text-center text-muted">
+    No favorite contacts yet.
+  </div>
+
+  <!-- Display favorite contacts -->
+  <div *ngFor="let contact of (favorites$ | async)" class="col-md-4 mb-3">
+    <div class="card">
+      <img *ngIf="contact.contactImage" [src]="contact.contactImage" class="card-img-top" alt="Contact Image">
+      <div class="card-body">
+        <h5 class="card-title">
+          {{ contact.firstName }} {{ contact.lastName }}
+        </h5>
+        <p class="card-text">{{ contact.email }}</p>
+        <p class="card-text">{{ contact.phoneNumber }}</p>
+
+        <button class="btn btn-sm btn-warning" (click)="toggleFavorite(contact)">
+          Remove from Favorites
+        </button>
       </div>
     </div>
   </div>
+</div>

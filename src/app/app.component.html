@@ -41,6 +41,11 @@
   </div>
 </nav>
 
+
+<div class="container mt-4 d-flex justify-content-between">
+  <app-view-toggle [(viewMode)]="viewMode"></app-view-toggle>
+</div>
+
 <div class="container mt-4">
   <router-outlet></router-outlet>
 </div>

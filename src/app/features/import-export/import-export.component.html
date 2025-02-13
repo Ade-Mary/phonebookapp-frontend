@@ -1,1 +1,39 @@
-<p>import-export works!</p>
+<div class="container mt-4">
+    <h2>Import/Export Contacts</h2>
+  
+
+    <div class="mb-3">
+      <label for="fileInput" class="form-label">Import CSV:</label>
+      <input type="file" id="fileInput" class="form-control" (change)="onFileSelected($event)">
+      <button class="btn btn-primary mt-2" (click)="importContacts()">Import</button>
+    </div>
+  
+    
+    <div class="mb-3">
+      <button class="btn btn-success" (click)="exportContacts()">Export Contacts</button>
+    </div>
+  
+    
+    <div *ngIf="contacts.length > 0">
+      <h3>Imported Contacts</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let contact of contacts">
+            <td>{{ contact.firstName }}</td>
+            <td>{{ contact.lastName }}</td>
+            <td>{{ contact.email }}</td>
+            <td>{{ contact.phone }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
